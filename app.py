@@ -1,15 +1,15 @@
 from flask import Flask, jsonify, request
-from flask_cors import CORS
 import os
+from decouple import config
 import pymongo
 from pymongo import MongoClient
 
 #-------------------------------------------------------------------------------
 # Replace these with your server details
-MONGO_HOST = os.getenv('MONGODB_HOSTNAME', '127.0.0.1')
-MONGO_PORT = os.getenv('MONGODB_PORT', '27017')
-MONGO_USER = os.getenv('MONGODB_USERNAME', 'user')
-MONGO_PASS = os.getenv('MONGODB_PASSWORD', 'pwd')
+MONGO_HOST = os.getenv('MONGODB_HOSTNAME', config('MONGODB_HOSTNAME'))
+MONGO_PORT = os.getenv('MONGODB_PORT', config('MONGODB_PORT'))
+MONGO_USER = os.getenv('MONGODB_USERNAME', config('MONGODB_USERNAME'))
+MONGO_PASS = os.getenv('MONGODB_PASSWORD', config('MONGODB_PASSWORD'))
 
 uri = "mongodb://{}:{}@{}:{}/".format(MONGO_USER, MONGO_PASS, MONGO_HOST, MONGO_PORT)
 conn = MongoClient(uri, connect=False)
@@ -21,8 +21,6 @@ DEBUG = True
 
 application = Flask(__name__)
 
-# enable CORS
-CORS(application, resources={r'/*': {'origins': '*'}})
 
 BOOKS = [
     {
@@ -86,9 +84,10 @@ def all_books():
         response_object['message'] = 'Book added!'
     else:
         response_object['books'] = BOOKS
-    response = jsonify(response_object)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+    #  response = jsonify(response_object)
+    #  response.headers.add('Access-Control-Allow-Origin', '*')
+    #  return response
+    return jsonify(response_object)
 
 
 #  if __name__ == '__main__':
